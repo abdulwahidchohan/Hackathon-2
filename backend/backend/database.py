@@ -17,5 +17,5 @@ def get_session():
 
 
 def init_db():
-    from backend.models import Task  # noqa: F401 — register table
+    from backend.models import Conversation, Message, Task  # noqa: F401 — register tables
     SQLModel.metadata.create_all(engine)
