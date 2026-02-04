@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.database import init_db
+from backend.routes.chat import router as chat_router
 from backend.routes.tasks import router as tasks_router
 
 
@@ -30,6 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(tasks_router)
+app.include_router(chat_router)
 
 
 @app.get("/health")

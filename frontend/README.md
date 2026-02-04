@@ -28,9 +28,10 @@ App: http://localhost:3000
 
 ## Pages
 
-- `/` — Redirects to `/dashboard` if signed in, else `/login`.
+- `/` — Redirects to `/chat` if signed in, else `/login`.
 - `/login` — Sign in (email/password).
 - `/signup` — Create account.
 - `/dashboard` — Task list; add, edit, delete, mark complete. Requires sign-in.
+- `/chat` — AI todo chatbot (Phase III). Natural language: "Add a task to buy groceries", "Show my tasks", "Mark task 3 complete", etc. Requires sign-in and backend `OPENAI_API_KEY`.
 
 All API calls to the backend include `Authorization: Bearer <JWT>`.

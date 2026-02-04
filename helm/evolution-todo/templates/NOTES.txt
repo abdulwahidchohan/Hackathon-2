@@ -1,0 +1,17 @@
+Evolution of Todo (Phase IV) has been deployed.
+
+1. Ensure Minikube ingress addon is enabled:
+   minikube addons enable ingress
+
+2. Add to /etc/hosts (or C:\Windows\System32\drivers\etc\hosts):
+   {{ .Values.ingress.host }}  (minikube ip or 127.0.0.1 if using minikube tunnel)
+
+3. Get Minikube IP: minikube ip
+   Then: echo "<minikube-ip> {{ .Values.ingress.host }}" | sudo tee -a /etc/hosts
+
+   Or use tunnel: minikube tunnel (then use 127.0.0.1 for {{ .Values.ingress.host }})
+
+4. Open in browser: http://{{ .Values.ingress.host }}
+
+Backend API: http://{{ .Values.ingress.host }}/api/
+Frontend: http://{{ .Values.ingress.host }}/

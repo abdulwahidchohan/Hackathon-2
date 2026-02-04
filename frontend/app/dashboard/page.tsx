@@ -117,7 +117,8 @@ export default function DashboardPage() {
     <main style={{ maxWidth: 640, margin: "2rem auto", padding: "0 1rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <h1>Evolution of Todo</h1>
-        <div>
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <Link href="/chat">Chat</Link>
           <span style={{ marginRight: "0.5rem" }}>{user.id}</span>
           <button
             type="button"

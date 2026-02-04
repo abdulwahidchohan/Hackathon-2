@@ -1,0 +1,39 @@
+# Evolution of Todo — Helm values (Phase IV)
+# Override for Minikube: image pull policy, ingress host, secrets
+
+replicaCount: 1
+
+backend:
+  image:
+    repository: evolution-todo-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    port: 8000
+  env:
+    # Set via --set or override file; do not commit real secrets
+    DATABASE_URL: ""
+    BETTER_AUTH_SECRET: ""
+    OPENAI_API_KEY: ""
+  resources: {}
+  # existingSecret: evolution-todo-backend-secret
+
+frontend:
+  image:
+    repository: evolution-todo-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    port: 3000
+  env:
+    # Public origin (Ingress host). Browser calls this origin + /api/... for backend.
+    NEXT_PUBLIC_API_URL: "http://local.evolution-todo.com"
+  resources: {}
+
+ingress:
+  enabled: true
+  className: nginx
+  host: local.evolution-todo.com
+  annotations: {}
+  # For Minikube: minikube addons enable ingress
+  # Add to /etc/hosts: 127.0.0.1 local.evolution-todo.com

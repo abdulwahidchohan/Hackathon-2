@@ -7,7 +7,7 @@ import { authClient } from "@/lib/auth-client";
 export default async function HomePage() {
   const session = await authClient.getSession();
   if (session?.data?.user) {
-    redirect("/dashboard");
+    redirect("/chat");
   }
   redirect("/login");
 }

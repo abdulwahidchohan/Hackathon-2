@@ -4,9 +4,9 @@ A spec-driven todo application that evolves from a console app (Phase I) to a cl
 
 **Hackathon:** [Hackathon II – Todo Spec-Driven Development](https://github.com/panaversity/spec-kit-plus) (Panaversity / PIAIC / GIAIC).
 
-## Current Phase: Phase II — Full-Stack Web Application
+## Current Phase: Phase IV — Local Kubernetes Deployment
 
-Phase I (in-memory console app) is complete. Phase II adds a full-stack web app: Next.js 16+ frontend, FastAPI backend, SQLModel + Neon PostgreSQL, Better Auth (JWT). All five basic features (Add, Delete, Update, View List, Mark Complete) are available in the web UI with user signup/signin.
+Phase I–III are complete. Phase IV adds containerization (Docker) and Helm charts for deploying the Todo Chatbot on Minikube. Build backend and frontend images, load them into Minikube, install the Helm chart with your secrets, enable Ingress, and open the app at the Ingress host (e.g. http://local.evolution-todo.com).
 
 ## Setup
 
@@ -63,7 +63,18 @@ python -m todo.cli add "My first task" -d "Optional description"
    # Set BETTER_AUTH_SECRET and NEXT_PUBLIC_API_URL (see frontend/README.md)
    npm run dev
    ```
-   Open http://localhost:3000 — sign up, sign in, then use the task list.
+   Open http://localhost:3000 — sign up, sign in. Use **Tasks** (dashboard) or **Chat** (AI chatbot) to manage todos.
+
+### Phase IV — Local Kubernetes (Minikube)
+
+1. **Build images** (from repo root):
+   ```bash
+   docker build -t evolution-todo-backend:latest ./backend
+   docker build -t evolution-todo-frontend:latest --build-arg NEXT_PUBLIC_API_URL=http://local.evolution-todo.com ./frontend
+   ```
+2. **Load into Minikube:** `minikube image load evolution-todo-backend:latest` (and frontend).
+3. **Install Helm chart:** See [helm/README.md](helm/README.md) for full steps (Minikube, Ingress, secrets, hosts).
+4. Open **http://local.evolution-todo.com** (after adding the host to /etc/hosts and enabling Ingress).
 
 ## Project structure
 
@@ -72,8 +83,9 @@ python -m todo.cli add "My first task" -d "Optional description"
 | `specs/` | Spec-Kit managed specifications (constitution, overview, architecture, features) |
 | `specs_history/` | History of specification files (deliverable) |
 | `src/todo/` | Phase I Python console application |
-| `frontend/` | Phase II Next.js app (Better Auth, task UI) |
-| `backend/` | Phase II FastAPI app (SQLModel, Neon, JWT) |
+| `frontend/` | Phase II/III Next.js app (Better Auth, task UI, Chat) |
+| `backend/` | Phase II/III FastAPI app (SQLModel, Neon, JWT, Chat + Agents SDK) |
+| `helm/` | Phase IV Helm chart for Minikube (evolution-todo) |
 | `AGENTS.md` | Spec-driven workflow for all AI agents |
 | `CLAUDE.md` | Claude Code entry (references AGENTS.md) |
 
@@ -83,8 +95,8 @@ python -m todo.cli add "My first task" -d "Optional description"
 |-------|-------------|
 | **I** | In-memory Python console app (done) |
 | **II** | Full-stack web app (Next.js, FastAPI, Neon, Better Auth) — done |
-| **III** | AI-powered todo chatbot (OpenAI ChatKit, Agents SDK, MCP) |
-| **IV** | Local Kubernetes deployment (Docker, Minikube, Helm) |
+| **III** | AI-powered todo chatbot (chat endpoint, Agents SDK, task tools) — done |
+| **IV** | Local Kubernetes deployment (Docker, Minikube, Helm) — done |
 | **V** | Cloud deployment (Kafka, Dapr, DOKS/AKS/GKE) |
 
 ## License

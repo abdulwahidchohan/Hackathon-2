@@ -1,6 +1,6 @@
-# Evolution of Todo — Backend (Phase II)
+# Evolution of Todo — Backend (Phase II + III)
 
-FastAPI + SQLModel + Neon PostgreSQL. JWT auth via Better Auth (shared secret).
+FastAPI + SQLModel + Neon PostgreSQL. JWT auth via Better Auth. Phase III: chat endpoint + OpenAI Agents SDK (task tools).
 
 ## Setup
 
@@ -13,6 +13,7 @@ uv sync   # or: pip install -e .
 
 - `DATABASE_URL` — Neon PostgreSQL connection string (e.g. `postgresql://user:pass@host/db?sslmode=require`)
 - `BETTER_AUTH_SECRET` — Same secret as frontend Better Auth (JWT signing)
+- `OPENAI_API_KEY` — Required for Phase III chat (OpenAI Agents SDK)
 
 ## Run
 
@@ -34,3 +35,7 @@ All require `Authorization: Bearer <JWT>`.
 - `PUT /api/{user_id}/tasks/{id}` — Update (body: `{ "title": "...", "description": "..." }`)
 - `DELETE /api/{user_id}/tasks/{id}` — Delete
 - `PATCH /api/{user_id}/tasks/{id}/complete` — Toggle complete
+
+### Phase III — Chat
+
+- `POST /api/{user_id}/chat` — Send message, get AI response (body: `{ "message": "...", "conversation_id": null | number }`). Returns `{ conversation_id, response, tool_calls }`. Requires `OPENAI_API_KEY`.

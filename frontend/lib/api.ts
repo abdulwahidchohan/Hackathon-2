@@ -85,3 +85,24 @@ export async function toggleComplete(
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+
+// Phase III — Chat API
+export type ChatResponse = {
+  conversation_id: number;
+  response: string;
+  tool_calls: Array<{ name?: string; arguments?: Record<string, unknown> }>;
+};
+
+export async function sendChatMessage(
+  userId: string,
+  message: string,
+  conversationId: number | null = null
+): Promise<ChatResponse> {
+  const res = await fetchWithAuth(`/api/${encodeURIComponent(userId)}/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, conversation_id: conversationId }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
