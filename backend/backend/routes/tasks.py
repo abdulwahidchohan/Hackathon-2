@@ -12,7 +12,7 @@ from backend.auth import get_current_user_id
 from backend.database import get_session
 from backend.models import Task
 
-router = APIRouter(tags=["tasks"])
+router = APIRouter(prefix="/api", tags=["tasks"])
 
 
 class CreateTaskBody(BaseModel):
