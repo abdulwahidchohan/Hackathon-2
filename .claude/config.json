@@ -1,0 +1,12 @@
+{
+    "project_name": "evolution-todo",
+    "version": "1.0.0",
+    "tools": [
+        "run_command",
+        "replace_file_content",
+        "search_files",
+        "view_file"
+    ],
+    "specs_dir": "specs",
+    "history_file": ".claude/history.jsonl"
+}
