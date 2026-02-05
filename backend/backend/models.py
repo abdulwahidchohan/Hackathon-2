@@ -13,6 +13,10 @@ class Task(SQLModel, table=True):
     title: str = Field(max_length=200)
     description: str = Field(default="", max_length=1000)
     completed: bool = Field(default=False)
+    priority: str = Field(default="medium")  # low, medium, high
+    tags: str | None = Field(default=None)   # Comma-separated strings
+    due_date: datetime | None = Field(default=None)
+    recurring_rule: str | None = Field(default=None)  # daily, weekly, monthly
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 

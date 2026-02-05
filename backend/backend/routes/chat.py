@@ -48,14 +48,47 @@ def _get_agent_and_run(user_id: str, messages: list[dict]) -> tuple[str, list[di
         raise HTTPException(status_code=503, detail="OPENAI_API_KEY not set")
 
     @function_tool
-    def add_task_tool(title: str, description: str = "") -> dict:
-        """Create a new task. Title required, description optional."""
-        return add_task_impl(user_id, title, description)
+    def add_task_tool(
+        title: str, 
+        description: str = "",
+        priority: str = "medium",
+        tags: str | None = None,
+        due_date: str | None = None,
+        recurring_rule: str | None = None
+    ) -> dict:
+        """Create a new task. 
+        priority: 'low', 'medium', 'high'.
+        tags: comma-separated.
+        due_date: ISO 8601 string.
+        recurring_rule: 'daily', 'weekly', 'monthly'.
+        """
+        return add_task_impl(
+            user_id, 
+            title, 
+            description, 
+            priority=priority, 
+            tags=tags, 
+            due_date=due_date, 
+            recurring_rule=recurring_rule
+        )
 
     @function_tool
-    def list_tasks_tool(status: str = "all") -> list:
-        """List tasks. status: 'all' | 'pending' | 'completed'."""
-        return list_tasks_impl(user_id, status)
+    def list_tasks_tool(
+        status: str = "all",
+        priority: str | None = None,
+        tag: str | None = None,
+        search: str | None = None
+    ) -> list:
+        """List tasks with filtering.
+        status: 'all' | 'pending' | 'completed'.
+        """
+        return list_tasks_impl(
+            user_id, 
+            status=status,
+            priority=priority,
+            tag=tag,
+            search=search
+        )
 
     @function_tool
     def complete_task_tool(task_id: int) -> dict:
@@ -68,9 +101,26 @@ def _get_agent_and_run(user_id: str, messages: list[dict]) -> tuple[str, list[di
         return delete_task_impl(user_id, task_id)
 
     @function_tool
-    def update_task_tool(task_id: int, title: str | None = None, description: str | None = None) -> dict:
-        """Update task title and/or description."""
-        return update_task_impl(user_id, task_id, title=title, description=description)
+    def update_task_tool(
+        task_id: int, 
+        title: str | None = None, 
+        description: str | None = None,
+        priority: str | None = None,
+        tags: str | None = None,
+        due_date: str | None = None,
+        recurring_rule: str | None = None
+    ) -> dict:
+        """Update task details."""
+        return update_task_impl(
+            user_id, 
+            task_id, 
+            title=title, 
+            description=description,
+            priority=priority,
+            tags=tags,
+            due_date=due_date,
+            recurring_rule=recurring_rule
+        )
 
     instructions = f"""You are a helpful todo assistant. The authenticated user's id is: {user_id}.
 Use the task tools to add, list, complete, delete, or update tasks. Confirm actions with a friendly response.

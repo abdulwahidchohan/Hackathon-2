@@ -18,6 +18,10 @@ class Task:
     description: str
     completed: bool
     created_at: datetime
+    priority: str = "medium"
+    tags: list[str] | None = None
+    due_date: datetime | None = None
+    recurring_rule: str | None = None
 
     @staticmethod
     def validate_title(title: str) -> None:
@@ -38,3 +42,15 @@ class Task:
         if len(d) > DESCRIPTION_MAX:
             raise ValueError(f"Description must be at most {DESCRIPTION_MAX} characters")
         return d
+    
+    @staticmethod
+    def validate_priority(priority: str) -> str:
+        if priority not in ["low", "medium", "high"]:
+            raise ValueError("Priority must be 'low', 'medium', or 'high'")
+        return priority
+    
+    @staticmethod
+    def validate_recurring_rule(rule: str | None) -> str | None:
+        if rule and rule not in ["daily", "weekly", "monthly"]:
+             raise ValueError("Recurring rule must be 'daily', 'weekly', or 'monthly'")
+        return rule

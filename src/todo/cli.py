@@ -13,12 +13,25 @@ def _format_task(t) -> str:
     status = "done" if t.completed else "pending"
     created = t.created_at.strftime("%Y-%m-%d %H:%M")
     desc = f" — {t.description}" if t.description else ""
-    return f"  [{t.id}] {t.title}{desc} ({status}) — {created}"
+    meta = []
+    if t.priority != "medium": meta.append(f"[{t.priority}]")
+    if t.tags: meta.append(f"Tags:{','.join(t.tags)}")
+    if t.due_date: meta.append(f"Due:{t.due_date}")
+    if t.recurring_rule: meta.append(f"Repeat:{t.recurring_rule}")
+    meta_str = " " + " ".join(meta) if meta else ""
+    return f"  [{t.id}] {t.title}{desc} ({status}) — {created}{meta_str}"
 
 
 def cmd_add(args: argparse.Namespace) -> int:
     try:
-        task = STORE.add(args.title, args.description or "")
+        tags = args.tags.split(",") if args.tags else None
+        task = STORE.add(
+            args.title, 
+            args.description or "",
+            priority=args.priority,
+            tags=tags,
+            recurring_rule=args.recurring
+        )
         print(f"Added task [{task.id}] {task.title}")
         return 0
     except ValueError as e:
@@ -43,14 +56,21 @@ def cmd_update(args: argparse.Namespace) -> int:
     except ValueError:
         print("Error: id must be an integer", file=sys.stderr)
         return 1
-    if not args.title and args.description is None:
-        print("Error: provide at least --title or --description", file=sys.stderr)
+    
+    # If no update args provided
+    if not any([args.title, args.description is not None, args.priority, args.tags is not None, args.recurring is not None]):
+        print("Error: provide at least --title, --description, --priority, --tags, or --recurring", file=sys.stderr)
         return 1
+        
     try:
+        tags = args.tags.split(",") if args.tags else None
         task = STORE.update(
             task_id,
             title=args.title if args.title else None,
             description=args.description if args.description is not None else None,
+            priority=args.priority if args.priority else None,
+            tags=tags,
+            recurring_rule=args.recurring if args.recurring is not None else None
         )
         print(f"Updated task [{task.id}] {task.title}")
         return 0
@@ -102,6 +122,9 @@ def main() -> None:
     add_p = subparsers.add_parser("add", help="Add a task")
     add_p.add_argument("title", help="Task title (1–200 characters)")
     add_p.add_argument("--description", "-d", default="", help="Optional description (max 1000 chars)")
+    add_p.add_argument("--priority", "-p", default="medium", choices=["low", "medium", "high"], help="Priority")
+    add_p.add_argument("--tags", help="Comma-separated tags (e.g. work,home)")
+    add_p.add_argument("--recurring", choices=["daily", "weekly", "monthly"], help="Recurring rule")
     add_p.set_defaults(func=cmd_add)
 
     subparsers.add_parser("list", help="List all tasks").set_defaults(func=cmd_list)
@@ -110,6 +133,9 @@ def main() -> None:
     update_p.add_argument("id", help="Task ID")
     update_p.add_argument("--title", "-t", help="New title")
     update_p.add_argument("--description", "-d", help="New description")
+    update_p.add_argument("--priority", "-p", choices=["low", "medium", "high"], help="New priority")
+    update_p.add_argument("--tags", help="New tags")
+    update_p.add_argument("--recurring", choices=["daily", "weekly", "monthly"], help="New recurring rule")
     update_p.set_defaults(func=cmd_update)
 
     del_p = subparsers.add_parser("delete", help="Delete a task by ID")

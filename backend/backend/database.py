@@ -6,7 +6,7 @@ from sqlmodel import Session, create_engine, SQLModel
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
-    "postgresql://user:pass@localhost:5432/todo",
+    "sqlite:///todo.db",
 )
 engine = create_engine(DATABASE_URL, echo=os.environ.get("SQL_ECHO", "").lower() == "1")
 
