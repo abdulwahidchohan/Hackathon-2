@@ -166,21 +166,20 @@ class ChatResponse(BaseModel):
     # backend/routes/chat.py ChatResponse expects `tool_calls: list[dict]`.
     # Let's inspect the last turn in history.
     
+    # 6. Extract tool calls
+    # With automatic function calling, the SDK manages the turns.
+    # We inspect the new messages added to history to find any function calls.
+    
     tool_calls_list = []
-    # Iterate backwards through history to find function calls in this turn
-    # This is tricky with auto implementation. 
-    # For now, we return empty list or try to parse history logic if critical.
-    # The frontend uses this to show "Thinking..." or logs? 
-    # Let's simple check if we can extract them.
-    for part in chat.history[-1].parts:
-         if fn := part.function_call:
-             tool_calls_list.append({"name": fn.name, "arguments": dict(fn.args)})
-    # Actually, history might contain multiple turns if multiple tools called.
-    # We need to look at the "model" turns generated after our user message.
-    # But `chat.send_message` limits to one logical turn from user perspective?
-    # With auto function calling, it might do multiple model->function->model steps internally before returning.
-    # The `response.candidates[0].content.parts` might helpful? 
-    # Actually `chat.history` is the source of truth.
+    new_messages = chat.history[len(gemini_history):]
+    
+    for msg in new_messages:
+        for part in msg.parts:
+            if fn := part.function_call:
+                tool_calls_list.append({
+                    "name": fn.name, 
+                    "arguments": dict(fn.args)
+                })
     
     return (final_text, tool_calls_list)
 
