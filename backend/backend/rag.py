@@ -1,30 +1,47 @@
 import os
 import math
 from typing import List, Dict, Any
-from openai import OpenAI
+import google.generativeai as genai
 from sqlmodel import Session, select
 from backend.database import engine
 from backend.models import Task
 
-# Initialize OpenAI client
-# Ensure OPENAI_API_KEY is set in environment
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+# Initialize Gemini client
+# Ensure GEMINI_API_KEY is set in environment
+if os.environ.get("GEMINI_API_KEY"):
+    genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
 def get_embedding(text: str) -> List[float]:
     """Generate embedding for a single string."""
-    text = text.replace("\n", " ")
-    response = client.embeddings.create(input=[text], model="text-embedding-3-small")
-    return response.data[0].embedding
+    result = genai.embed_content(
+        model="models/text-embedding-004",
+        content=text,
+        task_type="retrieval_document",
+    )
+    return result['embedding']
 
 def get_batch_embeddings(texts: List[str]) -> List[List[float]]:
     """Generate embeddings for a list of strings."""
     if not texts:
         return []
-    # Cleanup texts
-    clean_texts = [t.replace("\n", " ") for t in texts]
-    response = client.embeddings.create(input=clean_texts, model="text-embedding-3-small")
-    # Ensure order is preserved (OpenAI guarantees this)
-    return [d.embedding for d in response.data]
+    # Gemini batch embedding
+    # Note: genai.embed_content doesn't support batch list directly in one call in the same way as OpenAI's strictly?
+    # Actually it does, check docs or iterate. text-embedding-004 supports batch.
+    # However, for simplicity and safety with the python SDK versions, iteration is safe for small lists.
+    # But let's try the batch method if supported or map it.
+    # The `embed_content` accepts a list of strings? No, `content` is a single string or list of chat messages.
+    # We should iterate or use batch_embed_contents if available. 
+    # Let's iterate for safety in this MVP.
+    
+    embeddings = []
+    for text in texts:
+         result = genai.embed_content(
+            model="models/text-embedding-004",
+            content=text,
+            task_type="retrieval_document",
+        )
+         embeddings.append(result['embedding'])
+    return embeddings
 
 def cosine_similarity(v1: List[float], v2: List[float]) -> float:
     """Compute cosine similarity between two vectors."""
