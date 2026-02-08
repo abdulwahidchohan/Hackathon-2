@@ -7,6 +7,11 @@ from sqlmodel import Session, select, col
 
 from backend.database import engine
 from backend.models import Task
+from backend.rag import search_tasks_semantic
+
+def search_tasks(user_id: str, query: str) -> list[dict]:
+    """Semantic search wrapper."""
+    return search_tasks_semantic(user_id, query)
 
 
 def add_task(

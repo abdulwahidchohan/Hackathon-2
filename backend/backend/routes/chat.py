@@ -42,6 +42,7 @@ def _get_agent_and_run(user_id: str, messages: list[dict]) -> tuple[str, list[di
         delete_task as delete_task_impl,
         list_tasks as list_tasks_impl,
         update_task as update_task_impl,
+        search_tasks as search_tasks_impl,
     )
 
     if not os.environ.get("OPENAI_API_KEY"):
@@ -91,6 +92,13 @@ def _get_agent_and_run(user_id: str, messages: list[dict]) -> tuple[str, list[di
         )
 
     @function_tool
+    def search_tasks_tool(query: str) -> list:
+        """Semantic search for tasks. Use this for vague queries like 'What do I need to do?' or 'Any chores?'.
+        Returns tasks relevant to the query based on meaning.
+        """
+        return search_tasks_impl(user_id, query)
+
+    @function_tool
     def complete_task_tool(task_id: int) -> dict:
         """Mark a task complete (toggle)."""
         return complete_task_impl(user_id, task_id)
@@ -124,6 +132,7 @@ def _get_agent_and_run(user_id: str, messages: list[dict]) -> tuple[str, list[di
 
     instructions = f"""You are a helpful todo assistant. The authenticated user's id is: {user_id}.
 Use the task tools to add, list, complete, delete, or update tasks. Confirm actions with a friendly response.
+Use 'search_tasks_tool' to find relevant tasks when the user asks vague questions or searches by meaning.
 If a tool returns an error (e.g. "Task not found"), say so clearly."""
 
     agent = Agent(
@@ -133,6 +142,7 @@ If a tool returns an error (e.g. "Task not found"), say so clearly."""
         tools=[
             add_task_tool,
             list_tasks_tool,
+            search_tasks_tool,
             complete_task_tool,
             delete_task_tool,
             update_task_tool,

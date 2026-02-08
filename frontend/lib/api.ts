@@ -11,6 +11,10 @@ export type Task = {
   title: string;
   description: string;
   completed: boolean;
+  priority: "low" | "medium" | "high";
+  tags: string | null;
+  due_date: string | null;
+  recurring_rule: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -34,12 +38,23 @@ export async function getTasks(userId: string): Promise<Task[]> {
 export async function createTask(
   userId: string,
   title: string,
-  description = ""
+  description = "",
+  priority: "low" | "medium" | "high" = "medium",
+  tags: string | null = null,
+  due_date: string | null = null,
+  recurring_rule: string | null = null
 ): Promise<Task> {
   const res = await fetchWithAuth(`/api/${encodeURIComponent(userId)}/tasks`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, description }),
+    body: JSON.stringify({
+      title,
+      description,
+      priority,
+      tags,
+      due_date,
+      recurring_rule
+    }),
   });
   if (!res.ok) throw new Error(await res.text());
   return res.json();
@@ -48,7 +63,14 @@ export async function createTask(
 export async function updateTask(
   userId: string,
   taskId: number,
-  data: { title?: string; description?: string }
+  data: {
+    title?: string;
+    description?: string;
+    priority?: "low" | "medium" | "high";
+    tags?: string | null;
+    due_date?: string | null;
+    recurring_rule?: string | null;
+  }
 ): Promise<Task> {
   const res = await fetchWithAuth(
     `/api/${encodeURIComponent(userId)}/tasks/${taskId}`,
