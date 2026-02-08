@@ -27,6 +27,7 @@ class ChatResponse(BaseModel):
     tool_calls: list[dict] = []
 
 
+def _get_agent_and_run(user_id: str, messages: list[dict]):
     import google.generativeai as genai
     from google.generativeai.types import content_types
     from collections.abc import Iterable

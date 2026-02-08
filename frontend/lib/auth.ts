@@ -1,15 +1,16 @@
-// Phase II — Better Auth server config (JWT for FastAPI backend)
-// [From]: Hackathon spec — Better Auth, BETTER_AUTH_SECRET
-
 import { betterAuth } from "better-auth";
-import { jwt } from "better-auth/plugins";
+import { nextCookies } from "better-auth/next-js";
+import Database from "better-sqlite3";
 
 export const auth = betterAuth({
-  secret: process.env.BETTER_AUTH_SECRET || "change-me-in-production",
-  basePath: "/api/auth",
-  plugins: [jwt()],
-  database: {
-    type: "sqlite",
-    url: process.env.BETTER_AUTH_DATABASE_URL || "file:./auth.db",
+  database: new Database("auth.db"),
+  emailAndPassword: {
+    enabled: true,
+    async sendResetPassword(data, request) {
+      // Send an email to the user with a link to reset their password
+    },
   },
+  plugins: [
+    nextCookies(),
+  ],
 });

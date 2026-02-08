@@ -1,15 +1,16 @@
-// Phase II — Better Auth client (get JWT for API calls)
-// [From]: Hackathon spec — attach JWT to API requests
-
-import { createAuthClient } from "better-auth/client";
-import { jwtClient } from "better-auth/client/plugins";
+import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-  baseURL: typeof window !== "undefined" ? window.location.origin : "",
-  plugins: [jwtClient()],
+  baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
 });
 
+export const {
+  signIn,
+  signOut,
+  signUp,
+  useSession
+} = authClient;
+
 export async function getToken(): Promise<string | null> {
-  const { data } = await authClient.token();
-  return data?.token ?? null;
+  return null;
 }

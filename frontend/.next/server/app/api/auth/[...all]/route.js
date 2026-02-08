@@ -30,7 +30,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   auth: () => (/* binding */ auth)\n/* harmony export */ });\n/* harmony import */ var better_auth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! better-auth */ \"(rsc)/./node_modules/better-auth/dist/index.mjs\");\n/* harmony import */ var better_auth_plugins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! better-auth/plugins */ \"(rsc)/./node_modules/better-auth/dist/plugins/index.mjs\");\n// Phase II — Better Auth server config (JWT for FastAPI backend)\n// [From]: Hackathon spec — Better Auth, BETTER_AUTH_SECRET\n\n\nconst auth = (0,better_auth__WEBPACK_IMPORTED_MODULE_0__.betterAuth)({\n    secret: process.env.BETTER_AUTH_SECRET || \"change-me-in-production\",\n    basePath: \"/api/auth\",\n    plugins: [\n        (0,better_auth_plugins__WEBPACK_IMPORTED_MODULE_1__.jwt)()\n    ],\n    database: {\n        type: \"sqlite\",\n        url: process.env.BETTER_AUTH_DATABASE_URL || \"file:./auth.db\"\n    }\n});\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHJzYykvLi9saWIvYXV0aC50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7QUFBQSxpRUFBaUU7QUFDakUsMkRBQTJEO0FBRWxCO0FBQ0M7QUFFbkMsTUFBTUUsT0FBT0YsdURBQVVBLENBQUM7SUFDN0JHLFFBQVFDLFFBQVFDLEdBQUcsQ0FBQ0Msa0JBQWtCLElBQUk7SUFDMUNDLFVBQVU7SUFDVkMsU0FBUztRQUFDUCx3REFBR0E7S0FBRztJQUNoQlEsVUFBVTtRQUNSQyxNQUFNO1FBQ05DLEtBQUtQLFFBQVFDLEdBQUcsQ0FBQ08sd0JBQXdCLElBQUk7SUFDL0M7QUFDRixHQUFHIiwic291cmNlcyI6WyJDOlxcVXNlcnNcXENob2hhbiBQQ1xcRG9jdW1lbnRzXFxHaXRIdWJcXEhhY2thdGhvbi0yXFxmcm9udGVuZFxcbGliXFxhdXRoLnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIFBoYXNlIElJIOKAlCBCZXR0ZXIgQXV0aCBzZXJ2ZXIgY29uZmlnIChKV1QgZm9yIEZhc3RBUEkgYmFja2VuZClcclxuLy8gW0Zyb21dOiBIYWNrYXRob24gc3BlYyDigJQgQmV0dGVyIEF1dGgsIEJFVFRFUl9BVVRIX1NFQ1JFVFxyXG5cclxuaW1wb3J0IHsgYmV0dGVyQXV0aCB9IGZyb20gXCJiZXR0ZXItYXV0aFwiO1xyXG5pbXBvcnQgeyBqd3QgfSBmcm9tIFwiYmV0dGVyLWF1dGgvcGx1Z2luc1wiO1xyXG5cclxuZXhwb3J0IGNvbnN0IGF1dGggPSBiZXR0ZXJBdXRoKHtcclxuICBzZWNyZXQ6IHByb2Nlc3MuZW52LkJFVFRFUl9BVVRIX1NFQ1JFVCB8fCBcImNoYW5nZS1tZS1pbi1wcm9kdWN0aW9uXCIsXHJcbiAgYmFzZVBhdGg6IFwiL2FwaS9hdXRoXCIsXHJcbiAgcGx1Z2luczogW2p3dCgpXSxcclxuICBkYXRhYmFzZToge1xyXG4gICAgdHlwZTogXCJzcWxpdGVcIixcclxuICAgIHVybDogcHJvY2Vzcy5lbnYuQkVUVEVSX0FVVEhfREFUQUJBU0VfVVJMIHx8IFwiZmlsZTouL2F1dGguZGJcIixcclxuICB9LFxyXG59KTtcclxuIl0sIm5hbWVzIjpbImJldHRlckF1dGgiLCJqd3QiLCJhdXRoIiwic2VjcmV0IiwicHJvY2VzcyIsImVudiIsIkJFVFRFUl9BVVRIX1NFQ1JFVCIsImJhc2VQYXRoIiwicGx1Z2lucyIsImRhdGFiYXNlIiwidHlwZSIsInVybCIsIkJFVFRFUl9BVVRIX0RBVEFCQVNFX1VSTCJdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///(rsc)/./lib/auth.ts\n");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   auth: () => (/* binding */ auth)\n/* harmony export */ });\n/* harmony import */ var better_auth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! better-auth */ \"(rsc)/./node_modules/better-auth/dist/index.mjs\");\n/* harmony import */ var better_auth_next_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! better-auth/next-js */ \"(rsc)/./node_modules/better-auth/dist/integrations/next-js.mjs\");\n/* harmony import */ var better_sqlite3__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! better-sqlite3 */ \"better-sqlite3\");\n/* harmony import */ var better_sqlite3__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(better_sqlite3__WEBPACK_IMPORTED_MODULE_2__);\n\n\n\nconst auth = (0,better_auth__WEBPACK_IMPORTED_MODULE_0__.betterAuth)({\n    database: new (better_sqlite3__WEBPACK_IMPORTED_MODULE_2___default())(\"auth.db\"),\n    emailAndPassword: {\n        enabled: true,\n        async sendResetPassword (data, request) {\n        // Send an email to the user with a link to reset their password\n        }\n    },\n    plugins: [\n        (0,better_auth_next_js__WEBPACK_IMPORTED_MODULE_1__.nextCookies)()\n    ]\n});\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHJzYykvLi9saWIvYXV0aC50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7OztBQUF5QztBQUNTO0FBQ1o7QUFFL0IsTUFBTUcsT0FBT0gsdURBQVVBLENBQUM7SUFDN0JJLFVBQVUsSUFBSUYsdURBQVFBLENBQUM7SUFDdkJHLGtCQUFrQjtRQUNoQkMsU0FBUztRQUNULE1BQU1DLG1CQUFrQkMsSUFBSSxFQUFFQyxPQUFPO1FBQ25DLGdFQUFnRTtRQUNsRTtJQUNGO0lBQ0FDLFNBQVM7UUFDUFQsZ0VBQVdBO0tBQ1o7QUFDSCxHQUFHIiwic291cmNlcyI6WyJDOlxcVXNlcnNcXENob2hhbiBQQ1xcRG9jdW1lbnRzXFxHaXRIdWJcXEhhY2thdGhvbi0yXFxmcm9udGVuZFxcbGliXFxhdXRoLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IGJldHRlckF1dGggfSBmcm9tIFwiYmV0dGVyLWF1dGhcIjtcclxuaW1wb3J0IHsgbmV4dENvb2tpZXMgfSBmcm9tIFwiYmV0dGVyLWF1dGgvbmV4dC1qc1wiO1xyXG5pbXBvcnQgRGF0YWJhc2UgZnJvbSBcImJldHRlci1zcWxpdGUzXCI7XHJcblxyXG5leHBvcnQgY29uc3QgYXV0aCA9IGJldHRlckF1dGgoe1xyXG4gIGRhdGFiYXNlOiBuZXcgRGF0YWJhc2UoXCJhdXRoLmRiXCIpLFxyXG4gIGVtYWlsQW5kUGFzc3dvcmQ6IHtcclxuICAgIGVuYWJsZWQ6IHRydWUsXHJcbiAgICBhc3luYyBzZW5kUmVzZXRQYXNzd29yZChkYXRhLCByZXF1ZXN0KSB7XHJcbiAgICAgIC8vIFNlbmQgYW4gZW1haWwgdG8gdGhlIHVzZXIgd2l0aCBhIGxpbmsgdG8gcmVzZXQgdGhlaXIgcGFzc3dvcmRcclxuICAgIH0sXHJcbiAgfSxcclxuICBwbHVnaW5zOiBbXHJcbiAgICBuZXh0Q29va2llcygpLFxyXG4gIF0sXHJcbn0pO1xyXG4iXSwibmFtZXMiOlsiYmV0dGVyQXV0aCIsIm5leHRDb29raWVzIiwiRGF0YWJhc2UiLCJhdXRoIiwiZGF0YWJhc2UiLCJlbWFpbEFuZFBhc3N3b3JkIiwiZW5hYmxlZCIsInNlbmRSZXNldFBhc3N3b3JkIiwiZGF0YSIsInJlcXVlc3QiLCJwbHVnaW5zIl0sImlnbm9yZUxpc3QiOltdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///(rsc)/./lib/auth.ts\n");
 
 /***/ }),
 
@@ -76,7 +76,7 @@ module.exports = require("next/dist/server/app-render/after-task-async-storage.e
 
 /***/ }),
 
-/***/ "./work-async-storage.external":
+/***/ "../app-render/work-async-storage.external":
 /*!*****************************************************************************!*\
   !*** external "next/dist/server/app-render/work-async-storage.external.js" ***!
   \*****************************************************************************/
@@ -87,7 +87,7 @@ module.exports = require("next/dist/server/app-render/work-async-storage.externa
 
 /***/ }),
 
-/***/ "./work-unit-async-storage.external":
+/***/ "../app-render/work-unit-async-storage.external":
 /*!**********************************************************************************!*\
   !*** external "next/dist/server/app-render/work-unit-async-storage.external.js" ***!
   \**********************************************************************************/
@@ -95,6 +95,17 @@ module.exports = require("next/dist/server/app-render/work-async-storage.externa
 
 "use strict";
 module.exports = require("next/dist/server/app-render/work-unit-async-storage.external.js");
+
+/***/ }),
+
+/***/ "better-sqlite3":
+/*!*********************************!*\
+  !*** external "better-sqlite3" ***!
+  \*********************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("better-sqlite3");
 
 /***/ }),
 
@@ -149,7 +160,7 @@ module.exports = require("next/dist/shared/lib/router/utils/app-paths");
 var __webpack_require__ = require("../../../../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, ["vendor-chunks/better-auth","vendor-chunks/next","vendor-chunks/zod","vendor-chunks/@better-auth","vendor-chunks/@better-fetch","vendor-chunks/defu","vendor-chunks/kysely","vendor-chunks/jose","vendor-chunks/@noble","vendor-chunks/better-call","vendor-chunks/rou3"], () => (__webpack_exec__("(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fauth%2F%5B...all%5D%2Froute&page=%2Fapi%2Fauth%2F%5B...all%5D%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fauth%2F%5B...all%5D%2Froute.ts&appDir=C%3A%5CUsers%5CChohan%20PC%5CDocuments%5CGitHub%5CHackathon-2%5Cfrontend%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CChohan%20PC%5CDocuments%5CGitHub%5CHackathon-2%5Cfrontend&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!")));
+var __webpack_exports__ = __webpack_require__.X(0, ["vendor-chunks/better-auth","vendor-chunks/next","vendor-chunks/kysely","vendor-chunks/@better-auth","vendor-chunks/zod","vendor-chunks/jose","vendor-chunks/better-call","vendor-chunks/@noble","vendor-chunks/rou3","vendor-chunks/defu","vendor-chunks/@better-fetch"], () => (__webpack_exec__("(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fauth%2F%5B...all%5D%2Froute&page=%2Fapi%2Fauth%2F%5B...all%5D%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fauth%2F%5B...all%5D%2Froute.ts&appDir=C%3A%5CUsers%5CChohan%20PC%5CDocuments%5CGitHub%5CHackathon-2%5Cfrontend%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CChohan%20PC%5CDocuments%5CGitHub%5CHackathon-2%5Cfrontend&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!")));
 module.exports = __webpack_exports__;
 
 })();

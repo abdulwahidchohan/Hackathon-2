@@ -68,7 +68,7 @@ export default function ChatPage() {
             type="button"
             className="secondary"
             onClick={async () => {
-              await authClient.signOut({ callbackURL: "/login" });
+              await authClient.signOut();
               router.push("/login");
             }}
           >
