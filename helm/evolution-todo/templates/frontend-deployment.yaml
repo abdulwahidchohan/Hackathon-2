@@ -26,6 +26,11 @@ spec:
           env:
             - name: NEXT_PUBLIC_API_URL
               value: {{ .Values.frontend.env.NEXT_PUBLIC_API_URL | quote }}
+            - name: BETTER_AUTH_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "evolution-todo.fullname" . }}-backend
+                  key: DATABASE_URL
             - name: BETTER_AUTH_SECRET
               valueFrom:
                 secretKeyRef:

@@ -12,9 +12,9 @@ backend:
     port: 8000
   env:
     # Set via --set or override file; do not commit real secrets
-    DATABASE_URL: ""
-    BETTER_AUTH_SECRET: ""
-    OPENAI_API_KEY: ""
+    DATABASE_URL: "postgresql://neondb_owner:npg_xYGJLo7AT6wZ@ep-flat-band-a7rtmidx-pooler.ap-southeast-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    BETTER_AUTH_SECRET: "hk2_evolution_todo_secret_key_9988776655"
+    GEMINI_API_KEY: "AIzaSyBj9_a2AsPr6hVFhWSChvIlRUJyMTmaJdE"
   resources: {}
   # existingSecret: evolution-todo-backend-secret
 
@@ -28,6 +28,8 @@ frontend:
   env:
     # Public origin (Ingress host). Browser calls this origin + /api/... for backend.
     NEXT_PUBLIC_API_URL: "http://local.evolution-todo.com"
+    # Optional: Postgres for auth users (recommended over local SQLite)
+    BETTER_AUTH_DATABASE_URL: ""
   resources: {}
 
 ingress:
