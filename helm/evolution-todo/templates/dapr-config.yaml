@@ -1,0 +1,38 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: dapr-config
+  namespace: default
+spec:
+  tracing:
+    samplingRate: "1"
+  metric:
+    enabled: true
+---
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: kafka-pubsub
+  namespace: default
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+    - name: brokers
+      value: "localhost:9092"  # Update with your Kafka broker
+    - name: consumerGroup
+      value: "task-events-group"
+    - name: clientId
+      value: "evolution-todo-backend"
+    - name: authType
+      value: "none"  # Change to "password" for auth
+---
+apiVersion: dapr.io/v1alpha1
+kind: Subscription
+metadata:
+  name: task-events-subscription
+  namespace: default
+spec:
+  topic: task-events
+  route: /dapr/subscribe
+  pubsubname: kafka-pubsub
