@@ -12,5 +12,6 @@ export const {
 } = authClient;
 
 export async function getToken(): Promise<string | null> {
-  return null;
+  const { data } = await authClient.getSession();
+  return data?.session?.token ?? null;
 }

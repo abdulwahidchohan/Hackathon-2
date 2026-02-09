@@ -21,6 +21,8 @@ def get_current_user_id(
             detail="Missing or invalid authorization header",
         )
     try:
+        # Debug: print token prefix
+        # print(f"DEBUG: Token prefix: {credentials.credentials[:10]}...", flush=True)
         payload = jwt.decode(
             credentials.credentials,
             BETTER_AUTH_SECRET,
@@ -28,12 +30,15 @@ def get_current_user_id(
         )
         user_id = payload.get("userId") or payload.get("sub")
         if not user_id:
+            print(f"DEBUG: Token missing userId/sub. Payload keys: {list(payload.keys())}", flush=True)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token missing user identifier",
             )
         return str(user_id)
-    except jwt.InvalidTokenError:
+    except jwt.InvalidTokenError as e:
+        print(f"DEBUG: InvalidTokenError: {e}", flush=True)
+        print(f"DEBUG: Secret used: {BETTER_AUTH_SECRET[:5]}...", flush=True)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",

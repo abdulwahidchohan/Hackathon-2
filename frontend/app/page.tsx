@@ -9,10 +9,11 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: await headers()
   });
+
   if (session) {
     redirect("/dashboard");
   }
-  return redirect("/login");
+  redirect("/login");
 }
