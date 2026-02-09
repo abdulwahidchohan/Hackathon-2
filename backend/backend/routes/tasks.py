@@ -9,16 +9,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Path, Query, status
 from pydantic import BaseModel, Field
 from sqlmodel import Session, select, col
 
-try:
-    from dapr.clients import DaprClient
-except ImportError:
-    print("Warning: dapr-client not found. Dapr functionality disabled.")
-    
-    class DaprClient:
-        def __enter__(self): return self
-        def __exit__(self, *args): pass
-        def publish_event(self, *args, **kwargs):
-            print("Mock DaprClient: publish_event called (Dapr not installed)")
+from dapr.clients import DaprClient
 
 from backend.auth import get_current_user_id
 from backend.database import get_session
@@ -126,24 +117,17 @@ def create_task(
     session.refresh(task)
     session.refresh(task)
 
+    # Phase V: Publish Event
     try:
         with DaprClient() as d:
-            event_data = {
-                "event": "task_created",
-                "task_id": task.id,
-                "user_id": user_id,
-                "title": task.title,
-                "priority": task.priority
-            }
             d.publish_event(
-                pubsub_name="pubsub",
-                topic_name="tasks",
-                data=json.dumps(event_data),
+                pubsub_name="kafka-pubsub",
+                topic_name="task-events",
+                data=json.dumps({"event": "created", "task_id": task.id, "title": task.title}),
                 data_content_type="application/json",
             )
-            print(f"Published task_created event: {event_data}", flush=True)
     except Exception as e:
-        print(f"Failed to publish event: {e}", flush=True)
+        print(f"Warning: Failed to publish event: {e}")
 
     return task
 
@@ -273,20 +257,13 @@ def toggle_complete(
     if task.completed:
         try:
             with DaprClient() as d:
-                event_data = {
-                    "event": "task_completed",
-                    "task_id": task.id,
-                    "user_id": user_id,
-                    "title": task.title
-                }
                 d.publish_event(
-                    pubsub_name="pubsub",
-                    topic_name="tasks",
-                    data=json.dumps(event_data),
+                    pubsub_name="kafka-pubsub",
+                    topic_name="task-events",
+                    data=json.dumps({"event": "completed", "task_id": task.id, "title": task.title}),
                     data_content_type="application/json",
                 )
-                print(f"Published task_completed event: {event_data}", flush=True)
         except Exception as e:
-            print(f"Failed to publish event: {e}", flush=True)
+             print(f"Warning: Failed to publish event: {e}")
 
     return task
