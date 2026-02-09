@@ -33,6 +33,10 @@ export default function SignUp() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 1024 * 1024) { // 1MB limit
+        toast.error("Image size must be less than 1MB");
+        return;
+      }
       setImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -186,7 +190,10 @@ export default function SignUp() {
               }}
             >
               {loading ? (
-                <Loader2 size={16} className="animate-spin" />
+                <div className="flex items-center gap-2">
+                  <Loader2 size={16} className="animate-spin" />
+                  <span>Creating Account...</span>
+                </div>
               ) : (
                 "Initialize Account"
               )}

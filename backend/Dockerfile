@@ -1,13 +1,15 @@
 # Phase IV — Backend (FastAPI + SQLModel + OpenAI Agents)
 # Evolution of Todo — Hackathon II
 
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
 # Install dependencies
 COPY pyproject.toml README.md ./
 COPY backend/ ./backend/
+RUN pip install --upgrade pip
+RUN pip config set global.index-url https://pypi.org/simple/
 RUN pip install --no-cache-dir .
 
 EXPOSE 8000
