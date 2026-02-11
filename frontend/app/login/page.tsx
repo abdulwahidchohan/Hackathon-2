@@ -98,6 +98,12 @@ export default function SignIn() {
                     onResponse: () => {
                       setLoading(false);
                     },
+                    onSuccess: () => {
+                      window.location.href = "/dashboard";
+                    },
+                    onError: (ctx) => {
+                      alert(ctx.error.message);
+                    }
                   },
                 });
               }}
