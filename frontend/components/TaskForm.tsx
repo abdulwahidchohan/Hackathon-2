@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { type Task } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea"; // Assuming you have this or use native
+import { Label } from "@/components/ui/label";
+import { Loader2, Calendar, Tag, Repeat, AlertCircle } from "lucide-react";
 
 type TaskFormProps = {
     initialTask?: Task | null;
@@ -30,7 +35,6 @@ export default function TaskForm({ initialTask, onSubmit, onCancel }: TaskFormPr
 
     useEffect(() => {
         if (initialTask?.due_date) {
-            // Format for datetime-local input: YYYY-MM-DDTHH:mm
             const dt = new Date(initialTask.due_date);
             dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
             setDueDate(dt.toISOString().slice(0, 16));
@@ -59,100 +63,132 @@ export default function TaskForm({ initialTask, onSubmit, onCancel }: TaskFormPr
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4 border rounded-lg bg-white shadow-sm">
-            <h3 className="text-lg font-semibold">{initialTask ? "Edit Task" : "New Task"}</h3>
+        <form onSubmit={handleSubmit} className="glass border-white/10 rounded-xl p-6 relative overflow-hidden">
+            {/* Gradient Border Overlay */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-purple-500 to-pink-500"></div>
 
-            {error && <p className="text-red-600 text-sm">{error}</p>}
-
-            <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium">Title *</label>
-                <input
-                    required
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="border p-2 rounded"
-                    placeholder="Buy groceries"
-                />
+            <div className="mb-6">
+                <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                    {initialTask ? "Update Mission" : "New Directive"}
+                </h3>
+                <p className="text-sm text-gray-400">
+                    {initialTask ? "Modify existing parameters." : "Define a new task for the system."}
+                </p>
             </div>
 
-            <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium">Description</label>
-                <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="border p-2 rounded"
-                    placeholder="Details..."
-                    rows={3}
-                />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium">Priority</label>
-                    <select
-                        value={priority}
-                        onChange={(e) => setPriority(e.target.value as any)}
-                        className="border p-2 rounded"
-                    >
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
+            {error && (
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 rounded-lg flex items-center gap-2 text-red-200 text-sm">
+                    <AlertCircle className="w-4 h-4" />
+                    {error}
                 </div>
+            )}
 
-                <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium">Recurring</label>
-                    <select
-                        value={recurringRule}
-                        onChange={(e) => setRecurringRule(e.target.value)}
-                        className="border p-2 rounded"
-                    >
-                        <option value="">None</option>
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
-                    </select>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium">Due Date</label>
-                    <input
-                        type="datetime-local"
-                        value={dueDate}
-                        onChange={(e) => setDueDate(e.target.value)}
-                        className="border p-2 rounded"
+            <div className="space-y-4">
+                <div className="space-y-2">
+                    <Label htmlFor="title" className="text-gray-300">Title</Label>
+                    <Input
+                        id="title"
+                        required
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="bg-black/50 border-white/10 text-white placeholder:text-gray-600 focus:ring-primary/50 focus:border-primary/50"
+                        placeholder="e.g. Calibrate sensors"
                     />
                 </div>
 
-                <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium">Tags (comma separated)</label>
-                    <input
-                        value={tags}
-                        onChange={(e) => setTags(e.target.value)}
-                        className="border p-2 rounded"
-                        placeholder="work, urgent"
+                <div className="space-y-2">
+                    <Label htmlFor="desc" className="text-gray-300">Description</Label>
+                    <textarea
+                        id="desc"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        className="flex min-h-[80px] w-full rounded-md border border-white/10 bg-black/50 px-3 py-2 text-sm text-white placeholder:text-gray-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
+                        placeholder="Providing additional context..."
+                        rows={3}
                     />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label className="text-gray-300">Priority Level</Label>
+                        <select
+                            value={priority}
+                            onChange={(e) => setPriority(e.target.value as any)}
+                            className="w-full h-10 rounded-md border border-white/10 bg-black/50 px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-primary/50"
+                        >
+                            <option value="low">Low Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="high">High Priority</option>
+                        </select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label className="text-gray-300 flex items-center gap-2">
+                            <Repeat className="w-3 h-3" /> Recurrence
+                        </Label>
+                        <select
+                            value={recurringRule}
+                            onChange={(e) => setRecurringRule(e.target.value)}
+                            className="w-full h-10 rounded-md border border-white/10 bg-black/50 px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-primary/50"
+                        >
+                            <option value="">One-time Mission</option>
+                            <option value="daily">Daily Cycle</option>
+                            <option value="weekly">Weekly Cycle</option>
+                            <option value="monthly">Monthly Cycle</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label className="text-gray-300 flex items-center gap-2">
+                            <Calendar className="w-3 h-3" /> Due Date
+                        </Label>
+                        <Input
+                            type="datetime-local"
+                            value={dueDate}
+                            onChange={(e) => setDueDate(e.target.value)}
+                            className="bg-black/50 border-white/10 text-white placeholder:text-gray-600 focus:ring-primary/50 focus:border-primary/50 [color-scheme:dark]"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label className="text-gray-300 flex items-center gap-2">
+                            <Tag className="w-3 h-3" /> Tags
+                        </Label>
+                        <Input
+                            value={tags}
+                            onChange={(e) => setTags(e.target.value)}
+                            className="bg-black/50 border-white/10 text-white placeholder:text-gray-600 focus:ring-primary/50 focus:border-primary/50"
+                            placeholder="work, urgent"
+                        />
+                    </div>
                 </div>
             </div>
 
-            <div className="flex justify-end gap-2 mt-2">
-                <button
+            <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-white/10">
+                <Button
                     type="button"
+                    variant="ghost"
                     onClick={onCancel}
-                    className="px-4 py-2 text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
                     disabled={loading}
+                    className="text-gray-400 hover:text-white hover:bg-white/5"
                 >
                     Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                     type="submit"
-                    className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50"
                     disabled={loading}
+                    className="bg-primary hover:bg-primary/90 text-black font-bold shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] transition-all"
                 >
-                    {loading ? "Saving..." : "Save Task"}
-                </button>
+                    {loading ? (
+                        <div className="flex items-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin" /> saving...
+                        </div>
+                    ) : (
+                        initialTask ? "Update Mission" : "Initiate Task"
+                    )}
+                </Button>
             </div>
         </form>
     );
