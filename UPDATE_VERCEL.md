@@ -27,6 +27,10 @@ vercel env rm NEXT_PUBLIC_API_URL production
 vercel env add NEXT_PUBLIC_API_URL production
 # When prompted, enter: https://evolution-todo-backend-d1l1.onrender.com
 
+vercel env rm NEXT_PUBLIC_APP_URL production  # Remove if exists
+vercel env add NEXT_PUBLIC_APP_URL production # Add new value
+# When prompted, enter: https://hackathon-2-todo-pi.vercel.app
+
 # Redeploy
 vercel --prod
 ```
