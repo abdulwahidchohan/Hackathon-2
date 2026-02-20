@@ -3,7 +3,10 @@
 
 from datetime import datetime, timedelta
 
+import json
 from sqlmodel import Session, select, col
+
+from dapr.clients import DaprClient
 
 from backend.database import engine
 from backend.models import Task
@@ -64,6 +67,19 @@ def add_task(
         session.add(task)
         session.commit()
         session.refresh(task)
+
+        # Phase V: Publish Event
+        try:
+            with DaprClient() as d:
+                d.publish_event(
+                    pubsub_name="kafka-pubsub",
+                    topic_name="task-events",
+                    data=json.dumps({"event": "created", "task_id": task.id, "title": task.title}),
+                    data_content_type="application/json",
+                )
+        except Exception as e:
+            print(f"Warning: Failed to publish event from agent: {e}")
+
         return {
             "task_id": task.id,
             "status": "created",
@@ -168,6 +184,19 @@ def complete_task(user_id: str, task_id: int) -> dict:
             session.commit()
             
         session.refresh(task)
+        
+        # Phase V: Publish Event
+        if task.completed:
+            try:
+                with DaprClient() as d:
+                    d.publish_event(
+                        pubsub_name="kafka-pubsub",
+                        topic_name="task-events",
+                        data=json.dumps({"event": "completed", "task_id": task.id, "title": task.title}),
+                        data_content_type="application/json",
+                    )
+            except Exception as e:
+                print(f"Warning: Failed to publish event from agent: {e}")
         
         result = {
             "task_id": task.id,

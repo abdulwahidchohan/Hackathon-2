@@ -12,7 +12,7 @@ import {
 } from "@/lib/api";
 import TaskForm from "@/components/TaskForm";
 import { Button } from "@/components/ui/button";
-import { Plus, MessageSquare, LogOut, Calendar, Repeat, Tag, Trash2, Edit2, CheckCircle, Circle } from "lucide-react";
+import { Plus, MessageSquare, LogOut, Calendar, Repeat, Tag, Trash2, Edit2, CheckCircle, Circle, ChevronDown, ChevronRight, Filter } from "lucide-react";
 import { toast } from "sonner";
 
 type Props = {
@@ -29,6 +29,10 @@ export default function DashboardClient({ initialUser, initialTasks }: Props) {
   // Modal state
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+
+  // View state
+  const [filter, setFilter] = useState<"all" | "pending" | "completed">("all");
+  const [showCompleted, setShowCompleted] = useState(false);
 
   async function loadTasks() {
     if (!user?.id) return;
@@ -128,6 +132,9 @@ export default function DashboardClient({ initialUser, initialTasks }: Props) {
     }
   }
 
+  const pendingTasks = tasks.filter(t => !t.completed && (filter === "all" || filter === "pending"));
+  const completedTasks = tasks.filter(t => t.completed && (filter === "all" || filter === "completed"));
+
   if (!user) return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
       <div className="animate-pulse flex flex-col items-center gap-4">
@@ -183,6 +190,34 @@ export default function DashboardClient({ initialUser, initialTasks }: Props) {
           </div>
         </header>
 
+        {/* Filters */}
+        <div className="flex gap-2 mb-6">
+          <Button
+            variant={filter === "all" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter("all")}
+            className={filter === "all" ? "bg-primary text-black" : "border-white/10 text-gray-400 hover:text-white"}
+          >
+            All
+          </Button>
+          <Button
+            variant={filter === "pending" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter("pending")}
+            className={filter === "pending" ? "bg-primary text-black" : "border-white/10 text-gray-400 hover:text-white"}
+          >
+            Pending
+          </Button>
+          <Button
+            variant={filter === "completed" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter("completed")}
+            className={filter === "completed" ? "bg-primary text-black" : "border-white/10 text-gray-400 hover:text-white"}
+          >
+            Completed
+          </Button>
+        </div>
+
         {/* Task List */}
         {loading && !tasks.length ? (
           <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-4">
@@ -201,86 +236,161 @@ export default function DashboardClient({ initialUser, initialTasks }: Props) {
             </Button>
           </div>
         ) : (
-          <div className="grid gap-4">
-            {tasks.map((t) => (
-              <div
-                key={t.id}
-                className={`group relative glass rounded-xl p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_30px_rgba(0,0,0,0.3)] ${t.completed ? "opacity-60 grayscale-[0.5]" : ""
-                  }`}
-              >
-                <div className="flex items-start gap-4">
-                  {/* Checkbox */}
-                  <button
-                    onClick={() => handleToggleComplete(t.id)}
-                    className={`mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${t.completed
-                      ? "bg-green-500 border-green-500 text-black"
-                      : "border-gray-500 hover:border-primary text-transparent"
-                      }`}
+          <div className="grid gap-6">
+            {/* Pending Tasks Section */}
+            {(filter === "all" || filter === "pending") && (
+              <div className="grid gap-4">
+                {pendingTasks.map((t) => (
+                  <div
+                    key={t.id}
+                    className="group relative glass rounded-xl p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_30px_rgba(0,0,0,0.3)]"
                   >
-                    <CheckCircle className={`w-4 h-4 ${t.completed ? "opacity-100" : "opacity-0"}`} />
-                  </button>
+                    <div className="flex items-start gap-4">
+                      {/* Checkbox */}
+                      <button
+                        aria-label="Toggle completion status"
+                        onClick={() => handleToggleComplete(t.id)}
+                        className="mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all border-gray-500 hover:border-primary text-transparent"
+                      >
+                        <CheckCircle className="w-4 h-4 opacity-0" />
+                      </button>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                      <h3 className={`text-lg font-medium transition-all ${t.completed ? "text-gray-500 line-through" : "text-gray-100"}`}>
-                        {t.title}
-                      </h3>
-                      <div className="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => startEdit(t)}
-                          className="p-2 text-gray-400 hover:text-primary hover:bg-white/5 rounded-full transition-colors"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(t.id)}
-                          className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-full transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <h3 className="text-lg font-medium transition-all text-gray-100">
+                            {t.title}
+                          </h3>
+                          <div className="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                            <button
+                              aria-label="Edit task"
+                              onClick={() => startEdit(t)}
+                              className="p-2 text-gray-400 hover:text-primary hover:bg-white/5 rounded-full transition-colors"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              aria-label="Delete task"
+                              onClick={(e) => {
+                                if (window.confirm("Are you sure you want to delete this task?")) {
+                                  handleDelete(t.id);
+                                }
+                              }}
+                              className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-full transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {t.description && (
+                          <p className="mt-2 text-sm text-gray-400">
+                            {t.description}
+                          </p>
+                        )}
+
+                        <div className="flex flex-wrap gap-2 mt-4">
+                          {/* Priority Badge */}
+                          <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full border ${getPriorityColor(t.priority)}`}>
+                            {t.priority}
+                          </span>
+
+                          {/* Recurring Badge */}
+                          {t.recurring_rule && (
+                            <span className="px-2.5 py-0.5 text-xs font-medium text-purple-400 bg-purple-400/10 border border-purple-400/30 rounded-full flex items-center gap-1">
+                              <Repeat className="w-3 h-3" /> {t.recurring_rule}
+                            </span>
+                          )}
+
+                          {/* Due Date Badge */}
+                          {t.due_date && (
+                            <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full border flex items-center gap-1 ${new Date(t.due_date) < new Date() && !t.completed
+                              ? "text-red-400 bg-red-400/10 border-red-400/30"
+                              : "text-blue-400 bg-blue-400/10 border-blue-400/30"
+                              }`}>
+                              <Calendar className="w-3 h-3" /> {new Date(t.due_date).toLocaleDateString()}
+                            </span>
+                          )}
+
+                          {/* Tags */}
+                          {t.tags && t.tags.split(',').map(tag => (
+                            <span key={tag} className="px-2.5 py-0.5 text-xs text-cyan-400 bg-cyan-400/10 border border-cyan-400/30 rounded-full flex items-center gap-1">
+                              <Tag className="w-3 h-3" /> {tag.trim()}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
-
-                    {t.description && (
-                      <p className={`mt-2 text-sm text-gray-400 ${t.completed ? "line-through" : ""}`}>
-                        {t.description}
-                      </p>
-                    )}
-
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {/* Priority Badge */}
-                      <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full border ${getPriorityColor(t.priority)}`}>
-                        {t.priority}
-                      </span>
-
-                      {/* Recurring Badge */}
-                      {t.recurring_rule && (
-                        <span className="px-2.5 py-0.5 text-xs font-medium text-purple-400 bg-purple-400/10 border border-purple-400/30 rounded-full flex items-center gap-1">
-                          <Repeat className="w-3 h-3" /> {t.recurring_rule}
-                        </span>
-                      )}
-
-                      {/* Due Date Badge */}
-                      {t.due_date && (
-                        <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full border flex items-center gap-1 ${new Date(t.due_date) < new Date() && !t.completed
-                          ? "text-red-400 bg-red-400/10 border-red-400/30"
-                          : "text-blue-400 bg-blue-400/10 border-blue-400/30"
-                          }`}>
-                          <Calendar className="w-3 h-3" /> {new Date(t.due_date).toLocaleDateString()}
-                        </span>
-                      )}
-
-                      {/* Tags */}
-                      {t.tags && t.tags.split(',').map(tag => (
-                        <span key={tag} className="px-2.5 py-0.5 text-xs text-cyan-400 bg-cyan-400/10 border border-cyan-400/30 rounded-full flex items-center gap-1">
-                          <Tag className="w-3 h-3" /> {tag.trim()}
-                        </span>
-                      ))}
-                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
+            )}
+
+            {/* Completed Tasks Accordion */}
+            {(filter === "all" || filter === "completed") && completedTasks.length > 0 && (
+              <div className="mt-8">
+                <button
+                  aria-label="Toggle completed tasks visibility"
+                  onClick={() => setShowCompleted(!showCompleted)}
+                  className="w-full flex items-center justify-between p-4 glass rounded-xl border-white/5 hover:border-white/10 transition-colors group"
+                >
+                  <div className="flex items-center gap-3 text-gray-400 group-hover:text-gray-300">
+                    {showCompleted ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                    <span className="font-medium">Completed Tasks ({completedTasks.length})</span>
+                  </div>
+                </button>
+
+                {showCompleted && (
+                  <div className="grid gap-3 mt-4 animate-in slide-in-from-top-4 duration-300 opacity-60">
+                    {completedTasks.map((t) => (
+                      <div
+                        key={t.id}
+                        className="group relative glass rounded-xl p-4 transition-all duration-300 border-white/5 grayscale-[0.8]"
+                      >
+                        <div className="flex items-start gap-4">
+                          {/* Checkbox */}
+                          <button
+                            aria-label="Toggle completion status"
+                            onClick={() => handleToggleComplete(t.id)}
+                            className="mt-1 flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all bg-green-500 border-green-500 text-black"
+                          >
+                            <CheckCircle className="w-3 h-3 opacity-100" />
+                          </button>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                              <h3 className="text-base font-medium transition-all text-gray-500 line-through">
+                                {t.title}
+                              </h3>
+                              <div className="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                <button
+                                  aria-label="Delete completed task"
+                                  onClick={(e) => {
+                                    if (window.confirm("Are you sure you want to permanently delete this completed task?")) {
+                                      handleDelete(t.id);
+                                    }
+                                  }}
+                                  className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-white/5 rounded-full transition-colors"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Empty state for filtered views */}
+            {filter === "pending" && pendingTasks.length === 0 && (
+              <div className="text-center py-10 text-gray-500">No pending tasks matching your criteria.</div>
+            )}
+            {filter === "completed" && completedTasks.length === 0 && (
+              <div className="text-center py-10 text-gray-500">No completed tasks yet. Keep up the good work!</div>
+            )}
           </div>
         )}
       </div>

@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { signIn } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function SignIn() {
@@ -15,6 +16,7 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#0a0a0a] to-black text-white overflow-hidden relative">
@@ -76,9 +78,8 @@ export default function SignIn() {
               <Checkbox
                 id="remember"
                 className="border-white/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                onClick={() => {
-                  setRememberMe(!rememberMe);
-                }}
+                checked={rememberMe}
+                onCheckedChange={(checked) => setRememberMe(checked as boolean)}
               />
               <Label htmlFor="remember" className="text-gray-300">Remember me</Label>
             </div>
@@ -99,7 +100,7 @@ export default function SignIn() {
                       setLoading(false);
                     },
                     onSuccess: () => {
-                      window.location.href = "/dashboard";
+                      router.push("/dashboard");
                     },
                     onError: (ctx) => {
                       alert(ctx.error.message);

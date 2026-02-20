@@ -115,7 +115,6 @@ def create_task(
     session.add(task)
     session.commit()
     session.refresh(task)
-    session.refresh(task)
 
     # Phase V: Publish Event
     try:
@@ -250,7 +249,6 @@ def toggle_complete(
             )
             session.add(new_task)
     
-    session.commit()
     session.commit()
     session.refresh(task)
 
